@@ -1,5 +1,4 @@
 from keras_gan_models.library.dcgan import DCGan
-from keras_gan_models.library.utility.image_loader import load_and_scale_images
 
 
 def main():
@@ -11,3 +10,8 @@ def main():
     for i in range(3):
         image = gan.generate_image()
         image.save('./data/outputs/' + DCGan.model_name + '-generated-' + str(i) + '.png')
+
+
+if __name__ == '__main__':
+    main()
+

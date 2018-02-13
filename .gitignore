@@ -9,6 +9,7 @@ __pycache__/
 .idea/
 *.iml
 target
+Thumbs.db
 
 # Distribution / packaging
 .Python

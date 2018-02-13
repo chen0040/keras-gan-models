@@ -43,7 +43,7 @@ def generator_model(random_input_dim=None, img_width=None, img_height=None, img_
     model.add(Conv2D(img_channels, kernel_size=5, padding='same'))
     model.add(Activation('tanh'))
 
-    model.compile(loss='binary_crossentropy', optimizer="SGD")
+    model.compile(loss='mean_squared_error', optimizer="SGD")
 
     print(model.summary())
 
