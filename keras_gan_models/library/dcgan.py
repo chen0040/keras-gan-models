@@ -43,7 +43,7 @@ def generator_model(random_input_dim=None, img_width=None, img_height=None, img_
     model.add(Conv2D(img_channels, kernel_size=5, padding='same'))
     model.add(Activation('tanh'))
 
-    model.compile(loss='mean_squared_error', optimizer="SGD")
+    model.compile(loss='binary_crossentropy', optimizer="SGD")
 
     print(model.summary())
 
@@ -135,7 +135,7 @@ class DCGan(object):
             epochs = 100
 
         if batch_size is None:
-            batch_size = 64
+            batch_size = 128
 
         self.config = dict()
         self.config['img_width'] = self.img_width
@@ -158,7 +158,7 @@ class DCGan(object):
 
                 # initialize random input
                 for i in range(batch_size):
-                    noise[i, :] = np.random.uniform(-1, 1, 100)
+                    noise[i, :] = np.random.uniform(-1, 1, self.random_input_dim)
 
                 image_batch = images[batch_index * batch_size:(batch_index + 1) * batch_size]
                 image_batch = np.transpose(image_batch, (0, 2, 3, 1))
@@ -171,7 +171,7 @@ class DCGan(object):
 
                 # Step 2: train the generator
                 for i in range(batch_size):
-                    noise[i, :] = np.random.uniform(-1, 1, 100)
+                    noise[i, :] = np.random.uniform(-1, 1, self.random_input_dim)
                 self.discriminator.trainable = False
                 g_loss = self.model.train_on_batch(noise, [1] * batch_size)
 
@@ -179,3 +179,11 @@ class DCGan(object):
                 if batch_index % 10 == 9:
                     self.generator.save_weights(DCGan.get_weight_file_path(model_dir_path, 'generator'), True)
                     self.discriminator.save_weights(DCGan.get_weight_file_path(model_dir_path, 'discriminator'), True)
+
+    def generate_image(self):
+        noise = np.zeros(shape=(1, self.random_input_dim))
+        noise[0, :] = np.random.uniform(-1, 1, self.random_input_dim)
+        generated_images = self.generator.predict(noise, verbose=0)
+        generated_image = generated_images[0]
+        generated_image = generated_image * 127.5 + 127.5
+        return Image.fromarray(generated_image.astype(np.uint8))
