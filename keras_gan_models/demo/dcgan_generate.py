@@ -9,7 +9,9 @@ def main():
 
     for i in range(3):
         image = gan.generate_image()
-        image.save('./data/outputs/' + DCGan.model_name + '-generated-' + str(i) + '.png')
+        img_path = './data/outputs/' + DCGan.model_name + '-generated-' + str(i) + '.png'
+        print('generating: ', img_path)
+        image.save(img_path)
 
 
 if __name__ == '__main__':

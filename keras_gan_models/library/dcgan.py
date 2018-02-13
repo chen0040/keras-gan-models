@@ -178,9 +178,12 @@ class DCGan(object):
                 g_loss = self.model.train_on_batch(noise, np.array([1] * batch_size))
 
                 print("Epoch %d batch %d g_loss : %f" % (epoch, batch_index, g_loss))
-                if batch_index % 10 == 9:
+                if (epoch * batch_size + batch_index) % 10 == 9:
                     self.generator.save_weights(DCGan.get_weight_file_path(model_dir_path, 'generator'), True)
                     self.discriminator.save_weights(DCGan.get_weight_file_path(model_dir_path, 'discriminator'), True)
+
+        self.generator.save_weights(DCGan.get_weight_file_path(model_dir_path, 'generator'), True)
+        self.discriminator.save_weights(DCGan.get_weight_file_path(model_dir_path, 'discriminator'), True)
 
     def generate_image(self):
         noise = np.zeros(shape=(1, self.random_input_dim))
