@@ -4,12 +4,10 @@ from keras.layers.core import Activation, Flatten
 from keras.layers.normalization import BatchNormalization
 from keras.layers.convolutional import UpSampling2D, Conv2D, MaxPooling2D
 from keras.optimizers import SGD
-from keras.datasets import mnist
+from keras_gan_models.library.utility.image_utils import combine_images
 from keras import backend as K
 import numpy as np
 from PIL import Image
-import argparse
-import math
 import os
 
 
@@ -130,12 +128,15 @@ class DCGan(object):
         self.generator.load_weights(DCGan.get_weight_file_path(model_dir_path, 'generator'))
         self.discriminator.load_weights(DCGan.get_weight_file_path(model_dir_path, 'discriminator'))
 
-    def fit(self, model_dir_path, images, epochs=None, batch_size=None):
+    def fit(self, model_dir_path, images, epochs=None, batch_size=None, snapshot_dir_path=None, snapshot_interval=None):
         if epochs is None:
             epochs = 100
 
         if batch_size is None:
             batch_size = 128
+
+        if snapshot_interval is None:
+            snapshot_interval = 20
 
         self.config = dict()
         self.config['img_width'] = self.img_width
@@ -164,6 +165,13 @@ class DCGan(object):
                 image_batch = images[batch_index * batch_size:(batch_index + 1) * batch_size]
                 # image_batch = np.transpose(image_batch, (0, 2, 3, 1))
                 generated_images = self.generator.predict(noise, verbose=0)
+
+                if (epoch * batch_size + batch_index) % snapshot_interval == 0 and snapshot_dir_path is not None:
+                    image = combine_images(generated_images)
+                    image = image * 127.5 + 127.5
+                    Image.fromarray(image.astype(np.uint8)).save(
+                        os.path.join(snapshot_dir_path, DCGan.model_name + '-' + str(epoch) + "-" + str(batch_index) + ".png"))
+
                 X = np.concatenate((image_batch, generated_images))
                 Y = np.array([1] * batch_size + [0] * batch_size)
 
