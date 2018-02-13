@@ -29,9 +29,11 @@ def main():
 
     images = load_and_scale_images(image_dir_path, '.png', img_width, img_height)
 
-    batch_size = 32
-    epochs = 1000
-    gan.fit(model_dir_path, images=images, batch_size=batch_size, epochs=epochs)
+    batch_size = 4
+    epochs = 2000
+    gan.fit(model_dir_path, images=images, batch_size=batch_size, epochs=epochs,
+            snapshot_dir_path='./data/outputs', snapshot_interval=100)
+
 
 
 if __name__ == '__main__':

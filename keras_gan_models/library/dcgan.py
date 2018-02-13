@@ -167,10 +167,8 @@ class DCGan(object):
                 generated_images = self.generator.predict(noise, verbose=0)
 
                 if (epoch * batch_size + batch_index) % snapshot_interval == 0 and snapshot_dir_path is not None:
-                    image = combine_images(generated_images)
-                    image = image * 127.5 + 127.5
-                    Image.fromarray(image.astype(np.uint8)).save(
-                        os.path.join(snapshot_dir_path, DCGan.model_name + '-' + str(epoch) + "-" + str(batch_index) + ".png"))
+                    self.save_snapshots(generated_images, snapshot_dir_path=snapshot_dir_path,
+                                        epoch=epoch, batch_index=batch_index)
 
                 X = np.concatenate((image_batch, generated_images))
                 Y = np.array([1] * batch_size + [0] * batch_size)
@@ -200,3 +198,9 @@ class DCGan(object):
         generated_image = generated_images[0]
         generated_image = generated_image * 127.5 + 127.5
         return Image.fromarray(generated_image.astype(np.uint8))
+
+    def save_snapshots(self, generated_images, snapshot_dir_path, epoch, batch_index):
+        image = combine_images(generated_images)
+        image = image * 127.5 + 127.5
+        Image.fromarray(image.astype(np.uint8)).save(
+            os.path.join(snapshot_dir_path, DCGan.model_name + '-' + str(epoch) + "-" + str(batch_index) + ".png"))
