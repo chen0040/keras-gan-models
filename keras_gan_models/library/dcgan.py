@@ -148,34 +148,36 @@ class DCGan(object):
         np.save(config_file_path, self.config)
         noise = np.zeros((batch_size, self.random_input_dim))
 
+        self.create_model()
+
         for epoch in range(epochs):
             print("Epoch is", epoch)
             batch_count = int(images.shape[0] / batch_size)
             print("Number of batches", batch_count)
             for batch_index in range(batch_count):
                 # Step 1: train the discriminator
-                self.discriminator.trainable = True
 
                 # initialize random input
                 for i in range(batch_size):
                     noise[i, :] = np.random.uniform(-1, 1, self.random_input_dim)
 
                 image_batch = images[batch_index * batch_size:(batch_index + 1) * batch_size]
-                image_batch = np.transpose(image_batch, (0, 2, 3, 1))
+                # image_batch = np.transpose(image_batch, (0, 2, 3, 1))
                 generated_images = self.generator.predict(noise, verbose=0)
                 X = np.concatenate((image_batch, generated_images))
-                Y = [1] * batch_size + [0] * batch_size
+                Y = np.array([1] * batch_size + [0] * batch_size)
 
-                d_loss = self.discriminator.fit_on_batch(X, Y)
-                print("batch %d d_loss : %f" % (batch_index, d_loss))
+                self.discriminator.trainable = True
+                d_loss = self.discriminator.train_on_batch(X, Y)
+                print("Epoch %d batch %d d_loss : %f" % (epoch, batch_index, d_loss))
 
                 # Step 2: train the generator
                 for i in range(batch_size):
                     noise[i, :] = np.random.uniform(-1, 1, self.random_input_dim)
                 self.discriminator.trainable = False
-                g_loss = self.model.train_on_batch(noise, [1] * batch_size)
+                g_loss = self.model.train_on_batch(noise, np.array([1] * batch_size))
 
-                print("batch %d g_loss : %f" % (batch_index, g_loss))
+                print("Epoch %d batch %d g_loss : %f" % (epoch, batch_index, g_loss))
                 if batch_index % 10 == 9:
                     self.generator.save_weights(DCGan.get_weight_file_path(model_dir_path, 'generator'), True)
                     self.discriminator.save_weights(DCGan.get_weight_file_path(model_dir_path, 'discriminator'), True)

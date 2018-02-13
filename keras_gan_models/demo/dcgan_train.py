@@ -6,8 +6,8 @@ def main():
     image_dir_path = './data/images'
     model_dir_path = './models'
 
-    img_width = 224
-    img_height = 224
+    img_width = 64
+    img_height = 64
     img_channels = 3
 
     gan = DCGan()
@@ -18,4 +18,10 @@ def main():
 
     images = load_and_scale_images(image_dir_path, '.png', img_width, img_height)
 
-    gan.fit(model_dir_path, images=images)
+    batch_size = 4
+    gan.fit(model_dir_path, images=images, batch_size=batch_size)
+
+
+if __name__ == '__main__':
+    main()
+
