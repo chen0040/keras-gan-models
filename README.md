@@ -6,7 +6,7 @@ Some generative adversarial network models that I studied
 
 ### Deep Convolution GAN
 
-Below is the [sample codes](keras_gan_models/demo/dcgan_train.py) to train the DCGan on a set of pokemon sample images
+Below is the [sample codes](demo/dcgan_train.py) to train the DCGan on a set of pokemon sample images
 
 ```python
 from keras_gan_models.library.dcgan import DCGan
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     main()
 ```
 
-Below is the [sample codes](keras_gan_models/demo/dcgan_generate.py) on how to load the trained DCGan model to generate
+Below is the [sample codes](demo/dcgan_generate.py) on how to load the trained DCGan model to generate
 3 new pokemon samples:
 
 ```python
